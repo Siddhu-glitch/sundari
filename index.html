@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>IST Countdown</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #020617;
+            color: #e5e7eb;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 16px;
+        }
+
+        .timer {
+            font-size: 2rem;
+            letter-spacing: 2px;
+        }
+
+        .label {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Countdown to 6 Jan 2026 (IST)</h1>
+    <div class="timer" id="countdown">Loading...</div>
+    <div class="label">Days : Hours : Minutes : Seconds</div>
+</div>
+
+<script>
+    // 🔁 CHANGE THIS TO YOUR DESTINATION
+    const redirectURL = "next.html";
+
+    // 🎯 TARGET TIME (IST) — normal Date()
+    // Format: YYYY-MM-DDTHH:MM:SS+05:30
+    const targetIST = new Date("2026-01-06T00:00:00+05:30").getTime();
+
+    let redirected = false;
+
+    function updateCountdown() {
+        const now = Date.now();
+        const diff = targetIST - now;
+
+        if (diff <= 0 && !redirected) {
+            redirected = true;
+            window.location.href = redirectURL;
+            return;
+        }
+
+        if (diff <= 0) return;
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById("countdown").innerHTML =
+            `${days} : ${hours.toString().padStart(2, "0")} : ${minutes.toString().padStart(2, "0")} : ${seconds.toString().padStart(2, "0")}`;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+</script>
+
+</body>
+</html>
