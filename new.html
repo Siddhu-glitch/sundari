@@ -165,11 +165,7 @@ html,body{
 
 /* =========================
    📱 MOBILE (<=768px)
-   ========================= */
-@media(max-width:768px){
-
-  .sidebar{display:none}
-
+   ========================= 
   .main{padding:20px}
 
   .header{
@@ -388,3 +384,38 @@ load("morning");
 
 </body>
 </html>
+/* =========================
+   📱 PHONE SIDEBAR FIX
+   ========================= */
+@media (max-width:768px){
+
+  .container{
+    flex-direction:row; /* keep layout */
+  }
+
+  .sidebar{
+    width:90px;                 /* slim sidebar */
+    padding:14px 8px;
+    overflow-y:auto;
+  }
+
+  .sidebar h3{
+    font-size:.7rem;
+    text-align:center;
+  }
+
+  .playlist-btn{
+    font-size:.75rem;
+    text-align:center;
+    margin-bottom:14px;
+  }
+
+  .playlist-btn span{
+    display:block;
+    font-size:1.2rem;           /* emoji visible */
+  }
+
+  .main{
+    padding:16px;
+  }
+}
