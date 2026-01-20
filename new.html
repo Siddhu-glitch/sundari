@@ -8,7 +8,7 @@
 <style>
 *{box-sizing:border-box}
 
-/* STOP PAGE SCROLL */
+/* ===== BASE ===== */
 html,body{
   margin:0;
   height:100%;
@@ -18,62 +18,52 @@ html,body{
   color:#374151;
 }
 
-/* LAYOUT */
 .container{
   display:flex;
   height:100vh;
 }
 
-/* SIDEBAR */
+/* ===== SIDEBAR ===== */
 .sidebar{
   width:260px;
   padding:24px;
   background:rgba(255,255,255,.45);
 }
-.sidebar h3{
-  opacity:.6;
-  margin-bottom:16px;
-}
+.sidebar h3{opacity:.6;margin-bottom:16px}
 .playlist-btn{
   cursor:pointer;
   margin-bottom:12px;
   opacity:.85;
 }
-.playlist-btn:hover{
-  opacity:1;
-  font-weight:600;
-}
+.playlist-btn:hover{opacity:1;font-weight:600}
 
-/* MAIN */
+/* ===== MAIN ===== */
 .main{
   flex:1;
-  padding:24px;
+  padding:30px;
   display:flex;
   flex-direction:column;
 }
 
-/* HEADER */
+/* ===== HEADER ===== */
 .header{
   display:flex;
   gap:20px;
   align-items:center;
 }
 .header img{
-  width:140px;
-  height:140px;
+  width:150px;
+  height:150px;
   border-radius:14px;
   object-fit:cover;
 }
 .header h1{
   margin:0;
-  font-size:2.2rem;
+  font-size:2.6rem;
 }
-.poetry{
-  opacity:.6;
-  font-style:italic;
-}
+.poetry{opacity:.6;font-style:italic}
 
-/* SONG LIST AREA */
+/* ===== SONG LIST ===== */
 .song-header,.song{
   display:grid;
   grid-template-columns:40px 60px 2fr 1.5fr 60px;
@@ -89,9 +79,7 @@ html,body{
   border-radius:10px;
   cursor:pointer;
 }
-.song:hover{
-  background:rgba(255,255,255,.35);
-}
+.song:hover{background:rgba(255,255,255,.35)}
 .song img{
   width:42px;
   height:42px;
@@ -102,17 +90,17 @@ html,body{
   font-weight:600;
 }
 
-/* SCROLL ONLY SONGS */
+/* ===== SCROLL ONLY SONGS ===== */
 #songs{
   flex:1;
   overflow-y:auto;
-  margin-top:8px;
+  margin-top:6px;
   padding-right:8px;
 }
 #songs::-webkit-scrollbar{width:0}
 #songs{scrollbar-width:none}
 
-/* PLAYER */
+/* ===== PLAYER ===== */
 .player{
   position:fixed;
   bottom:20px;
@@ -136,8 +124,8 @@ html,body{
   align-items:center;
 }
 .player-left img{
-  width:46px;
-  height:46px;
+  width:48px;
+  height:48px;
   border-radius:8px;
 }
 
@@ -152,7 +140,7 @@ html,body{
   cursor:pointer;
 }
 
-/* PROGRESS */
+/* ===== PROGRESS ===== */
 .progress-wrap{
   grid-column:1/-1;
   display:flex;
@@ -175,17 +163,73 @@ html,body{
   border-radius:10px;
 }
 
-/* MOBILE */
+/* =========================
+   📱 MOBILE (<=768px)
+   ========================= */
 @media(max-width:768px){
+
   .sidebar{display:none}
+
+  .main{padding:20px}
+
   .header{
     flex-direction:column;
     text-align:center;
   }
+
+  .header img{
+    width:120px;
+    height:120px;
+  }
+
+  .header h1{
+    font-size:1.9rem;
+  }
+
   .song-header,.song{
     grid-template-columns:30px 50px 1fr 60px;
   }
-  .song span:nth-child(4){display:none}
+
+  .song span:nth-child(4){
+    display:none; /* hide album on phone */
+  }
+
+  .player{
+    bottom:12px;
+    padding:10px 14px;
+  }
+
+  .player-left img{
+    width:42px;
+    height:42px;
+  }
+
+  .controls button{
+    font-size:18px;
+  }
+}
+
+/* =========================
+   📲 TABLET (769–1024px)
+   ========================= */
+@media(min-width:769px) and (max-width:1024px){
+
+  .sidebar{
+    width:200px;
+  }
+
+  .header img{
+    width:130px;
+    height:130px;
+  }
+
+  .header h1{
+    font-size:2.2rem;
+  }
+
+  .player{
+    max-width:900px;
+  }
 }
 </style>
 </head>
@@ -198,7 +242,8 @@ html,body{
     <h3>playlists</h3>
     <div class="playlist-btn" onclick="load('morning')">🌅 morning feels</div>
     <div class="playlist-btn" onclick="load('goto')">🎧 my go to songs</div>
-    <div class="playlist-btn" onclick="load('cry')">🖤 cry with me</div>
+    <div class="playlist-btn" onclick="load('cry')">🖤 Cry with me</div>
+    <div class="playlist-btn" onclick="load('emo')">🌧️ endhukoo emo</div>
   </div>
 
   <div class="main">
@@ -224,7 +269,7 @@ html,body{
 <!-- PLAYER -->
 <div class="player">
   <div class="player-left">
-    <img id="pimg" src="">
+    <img id="pimg" src="1.jpeg">
     <div>
       <div id="ptitle">—</div>
       <div id="partist" style="opacity:.6;font-size:.85rem">—</div>
@@ -232,9 +277,9 @@ html,body{
   </div>
 
   <div class="controls">
-    <button onclick="prev()">⏮</button>
-    <button onclick="toggle()">⏯</button>
-    <button onclick="next()">⏭</button>
+    <button onclick="prevSong()">⏮</button>
+    <button onclick="audio.paused?audio.play():audio.pause()">⏯</button>
+    <button onclick="nextSong()">⏭</button>
   </div>
 
   <div></div>
@@ -257,15 +302,30 @@ const playlists={
     poetry:"I wake up softer than yesterday",
     cover:"mrng.jpeg",
     songs:[
-      {title:"Mera Mann Kehne Laga",artist:"Falak Shabbir",album:"Nautanki Saala",time:"3:47",img:"1.jpeg",src:"songs/1.mp3"},
-      {title:"Tum Se Hi",artist:"Mohit Chauhan",album:"Jab We Met",time:"5:21",img:"2.jpeg",src:"songs/2.mp3"}
+      {
+        title:"Mera Mann Kehne Laga",
+        artist:"Falak Shabbir",
+        album:"Nautanki Saala",
+        time:"3:47",
+        img:"1.jpeg",
+        src:"songs/Mera Mann Kehne Laga Nautanki Saala! 320 Kbps.mp3"
+      },
+      {
+        title:"Tum Se Hi",
+        artist:"Mohit Chauhan",
+        album:"Jab We Met",
+        time:"5:21",
+        img:"2.jpeg",
+        src:"songs/Tum Se Hi Jab We Met 320 Kbps.mp3"
+      }
     ]
   },
   goto:{title:"my go to songs",poetry:"these sound like me",cover:"mrng.jpeg",songs:[]},
-  cry:{title:"cry with me",poetry:"I let myself feel it",cover:"mrng.jpeg",songs:[]}
+  cry:{title:"Cry with me",poetry:"I let myself feel it",cover:"mrng.jpeg",songs:[]},
+  emo:{title:"endhukoo emo",poetry:"some things don’t need answers",cover:"mrng.jpeg",songs:[]}
 };
 
-let list=[],index=0;
+let currentPlaylist=[],currentIndex=0;
 const audio=document.getElementById("audio");
 const songsDiv=document.getElementById("songs");
 
@@ -274,37 +334,45 @@ function load(key){
   title.textContent=p.title;
   poetry.textContent=p.poetry;
   cover.src=p.cover;
-  list=p.songs;
+  currentPlaylist=p.songs;
   songsDiv.innerHTML="";
   p.songs.forEach((s,i)=>{
     const d=document.createElement("div");
     d.className="song";
-    d.innerHTML=`<span>${i+1}</span><img src="${s.img}"><span>${s.title}</span><span>${s.album}</span><span>${s.time}</span>`;
-    d.onclick=()=>play(i);
+    d.innerHTML=`
+      <span>${i+1}</span>
+      <img src="${s.img}">
+      <span>${s.title}</span>
+      <span>${s.album}</span>
+      <span>${s.time}</span>`;
+    d.onclick=()=>playSong(i);
     songsDiv.appendChild(d);
   });
-  if(list.length) play(0);
+  if(currentPlaylist.length) playSong(0);
 }
 
-function play(i){
-  index=i;
-  const s=list[i];
+function playSong(i){
+  currentIndex=i;
+  const s=currentPlaylist[i];
   audio.src=s.src;
   audio.play();
   pimg.src=s.img;
   ptitle.textContent=s.title;
   partist.textContent=s.artist;
-  document.querySelectorAll(".song").forEach((e,j)=>e.classList.toggle("playing",j===i));
+  document.querySelectorAll(".song").forEach((el,idx)=>{
+    el.classList.toggle("playing",idx===i);
+  });
 }
-function toggle(){audio.paused?audio.play():audio.pause()}
-function prev(){play((index-1+list.length)%list.length)}
-function next(){play((index+1)%list.length)}
-audio.onended=next;
+
+function prevSong(){playSong((currentIndex-1+currentPlaylist.length)%currentPlaylist.length)}
+function nextSong(){playSong((currentIndex+1)%currentPlaylist.length)}
+audio.onended=nextSong;
+
 audio.ontimeupdate=()=>{
   bar.style.width=(audio.currentTime/audio.duration)*100+"%";
   cur.textContent=format(audio.currentTime);
   dur.textContent=format(audio.duration);
-}
+};
 function seek(e){
   audio.currentTime=(e.offsetX/e.target.offsetWidth)*audio.duration;
 }
