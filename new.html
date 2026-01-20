@@ -21,7 +21,6 @@ html,body{
 .container{
   display:flex;
   height:100vh;
-  overflow:hidden;
 }
 
 /* ===== SIDEBAR ===== */
@@ -29,25 +28,15 @@ html,body{
   width:260px;
   padding:24px;
   background:rgba(255,255,255,.45);
-}
-
-/* ===== SIDEBAR TOGGLE ===== */
-.sidebar-toggle{
-  display:none;
   position:fixed;
-  top:50%;
-  left:0;
-  transform:translateY(-50%);
-  background:rgba(255,255,255,.9);
-  backdrop-filter:blur(10px);
-  padding:10px 6px;
-  border-radius:0 10px 10px 0;
-  font-weight:600;
-  cursor:pointer;
-  z-index:1001;
+  left:-260px;
+  top:0;
+  height:100vh;
+  z-index:1000;
+  transition:left .45s cubic-bezier(.25,1.5,.5,1);
 }
+.sidebar.open{left:0}
 
-/* ===== PLAYLIST BUTTON ===== */
 .playlist-btn{
   cursor:pointer;
   margin-bottom:14px;
@@ -55,11 +44,48 @@ html,body{
 }
 .playlist-btn:hover{opacity:1;font-weight:600}
 
+.playlist-btn.active{
+  background:linear-gradient(90deg,rgba(236,72,153,.35),transparent);
+  border-radius:10px;
+  padding:8px 10px;
+  font-weight:600;
+}
+
+/* ===== TOGGLE ===== */
+.sidebar-toggle{
+  position:fixed;
+  top:50%;
+  left:0;
+  transform:translateY(-50%);
+  background:rgba(255,255,255,.9);
+  padding:10px 6px;
+  border-radius:0 10px 10px 0;
+  font-weight:600;
+  cursor:pointer;
+  z-index:1001;
+}
+
+/* ===== OVERLAY ===== */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.25);
+  backdrop-filter:blur(6px);
+  opacity:0;
+  pointer-events:none;
+  transition:.3s;
+  z-index:999;
+}
+.overlay.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
 /* ===== MAIN ===== */
 .main{
   flex:1;
   padding:30px;
-  overflow:hidden;
+  width:100%;
 }
 
 /* ===== HEADER ===== */
@@ -108,7 +134,7 @@ html,body{
   font-weight:600;
 }
 
-/* ===== SCROLL ONLY SONGS ===== */
+/* ===== SCROLL ===== */
 #songs{
   height:calc(100vh - 360px);
   overflow-y:auto;
@@ -125,7 +151,7 @@ html,body{
   transform:translateX(-50%);
   width:calc(100% - 30px);
   max-width:1100px;
-  background:rgba(255,255,255,.85);
+  background:rgba(255,255,255,.9);
   backdrop-filter:blur(14px);
   border-radius:18px;
   padding:10px 16px;
@@ -133,6 +159,13 @@ html,body{
   grid-template-columns:1fr auto 1fr;
   align-items:center;
   box-shadow:0 8px 30px rgba(0,0,0,.15);
+  transition:.35s;
+}
+
+.player.expanded{
+  bottom:0;
+  height:70vh;
+  border-radius:18px 18px 0 0;
 }
 
 .player-left{
@@ -179,64 +212,22 @@ html,body{
   background:#ec4899;
   border-radius:10px;
 }
-
-/* ===== MOBILE SLIDE SIDEBAR ===== */
-@media(max-width:768px){
-
-  .sidebar{
-    position:fixed;
-    left:-260px;
-    top:0;
-    height:100vh;
-    z-index:1000;
-    transition:left .35s ease;
-  }
-
-  .sidebar.open{
-    left:0;
-  }
-
-  .sidebar-toggle{
-    display:block;
-  }
-
-  .header{
-    flex-direction:column;
-    text-align:center;
-  }
-
-  .header img{
-    width:130px;
-    height:130px;
-  }
-
-  .header h1{
-    font-size:2rem;
-  }
-
-  .song-header,.song{
-    grid-template-columns:30px 50px 1fr 60px;
-  }
-
-  .song span:nth-child(4){
-    display:none;
-  }
-}
 </style>
 </head>
 
 <body>
 
 <div class="sidebar-toggle" onclick="toggleSidebar()">》》》</div>
+<div class="overlay" onclick="closeSidebar()"></div>
 
 <div class="container">
 
   <div class="sidebar">
     <h3>playlists</h3>
-    <div class="playlist-btn" onclick="load('morning');closeSidebar()">🌅 morning feels</div>
-    <div class="playlist-btn" onclick="load('goto');closeSidebar()">🎧 my go to songs</div>
-    <div class="playlist-btn" onclick="load('cry');closeSidebar()">🖤 Cry with me</div>
-    <div class="playlist-btn" onclick="load('emo');closeSidebar()">🌧️ endhukoo emo</div>
+    <div class="playlist-btn" data-key="morning" onclick="load('morning');closeSidebar()">🌅 morning feels</div>
+    <div class="playlist-btn" data-key="goto" onclick="load('goto');closeSidebar()">🎧 my go to songs</div>
+    <div class="playlist-btn" data-key="cry" onclick="load('cry');closeSidebar()">🖤 Cry with me</div>
+    <div class="playlist-btn" data-key="emo" onclick="load('emo');closeSidebar()">🌧️ endhukoo emo</div>
   </div>
 
   <div class="main">
@@ -259,9 +250,9 @@ html,body{
   </div>
 </div>
 
-<div class="player">
+<div class="player" id="player">
   <div class="player-left">
-    <img id="pimg" src="1.jpeg">
+    <img id="pimg">
     <div>
       <div id="ptitle">—</div>
       <div id="partist" style="opacity:.6;font-size:.85rem">—</div>
@@ -288,35 +279,47 @@ html,body{
 </div>
 
 <script>
+/* ===== HAPTIC ===== */
+function vibrate(){navigator.vibrate && navigator.vibrate(15)}
+
+/* ===== SIDEBAR ===== */
 function toggleSidebar(){
   document.querySelector(".sidebar").classList.toggle("open");
+  document.querySelector(".overlay").classList.toggle("show");
+  vibrate();
 }
 function closeSidebar(){
   document.querySelector(".sidebar").classList.remove("open");
+  document.querySelector(".overlay").classList.remove("show");
 }
 
+/* ===== SWIPE ===== */
+let sx=0;
+document.addEventListener("touchstart",e=>sx=e.touches[0].clientX);
+document.addEventListener("touchend",e=>{
+  const dx=e.changedTouches[0].clientX-sx;
+  if(dx>80) toggleSidebar();
+  if(dx<-80) closeSidebar();
+});
+
+/* ===== PLAYER SWIPE ===== */
+let py=0;
+player.addEventListener("touchstart",e=>py=e.touches[0].clientY);
+player.addEventListener("touchend",e=>{
+  const dy=e.changedTouches[0].clientY-py;
+  if(dy<-80) player.classList.add("expanded");
+  if(dy>80) player.classList.remove("expanded");
+});
+
+/* ===== PLAYLIST DATA ===== */
 const playlists={
   morning:{
     title:"morning feels 🥰",
     poetry:"I wake up softer than yesterday",
     cover:"mrng.jpeg",
     songs:[
-      {
-        title:"Mera Mann Kehne Laga",
-        artist:"Falak Shabbir",
-        album:"Nautanki Saala",
-        time:"3:47",
-        img:"1.jpeg",
-        src:"songs/Mera Mann Kehne Laga Nautanki Saala! 320 Kbps.mp3"
-      },
-      {
-        title:"Tum Se Hi",
-        artist:"Mohit Chauhan",
-        album:"Jab We Met",
-        time:"5:21",
-        img:"2.jpeg",
-        src:"songs/Tum Se Hi Jab We Met 320 Kbps.mp3"
-      }
+      {title:"Mera Mann Kehne Laga",artist:"Falak Shabbir",album:"Nautanki Saala",time:"3:47",img:"1.jpeg",src:"songs/Mera Mann Kehne Laga Nautanki Saala! 320 Kbps.mp3"},
+      {title:"Tum Se Hi",artist:"Mohit Chauhan",album:"Jab We Met",time:"5:21",img:"2.jpeg",src:"songs/Tum Se Hi Jab We Met 320 Kbps.mp3"}
     ]
   },
   goto:{title:"my go to songs",poetry:"these sound like me",cover:"mrng.jpeg",songs:[]},
@@ -327,7 +330,14 @@ const playlists={
 let list=[],index=0;
 const audio=document.getElementById("audio");
 
+/* ===== LOAD PLAYLIST ===== */
 function load(key){
+  localStorage.setItem("lastPlaylist",key);
+
+  document.querySelectorAll(".playlist-btn").forEach(b=>{
+    b.classList.toggle("active",b.dataset.key===key);
+  });
+
   const p=playlists[key];
   title.textContent=p.title;
   poetry.textContent=p.poetry;
@@ -337,18 +347,14 @@ function load(key){
   p.songs.forEach((s,i)=>{
     const d=document.createElement("div");
     d.className="song";
-    d.innerHTML=`
-      <span>${i+1}</span>
-      <img src="${s.img}">
-      <span>${s.title}</span>
-      <span>${s.album}</span>
-      <span>${s.time}</span>`;
+    d.innerHTML=`<span>${i+1}</span><img src="${s.img}"><span>${s.title}</span><span>${s.album}</span><span>${s.time}</span>`;
     d.onclick=()=>play(i);
     songs.appendChild(d);
   });
   if(list.length) play(0);
 }
 
+/* ===== PLAYER ===== */
 function play(i){
   index=i;
   const s=list[i];
@@ -364,22 +370,22 @@ function prev(){play((index-1+list.length)%list.length)}
 function next(){play((index+1)%list.length)}
 audio.onended=next;
 
+/* ===== PROGRESS ===== */
 audio.ontimeupdate=()=>{
   bar.style.width=(audio.currentTime/audio.duration)*100+"%";
   cur.textContent=format(audio.currentTime);
   dur.textContent=format(audio.duration);
 };
-function seek(e){
-  audio.currentTime=(e.offsetX/e.target.offsetWidth)*audio.duration;
-}
+function seek(e){audio.currentTime=(e.offsetX/e.target.offsetWidth)*audio.duration}
 function format(t){
-  if(!t) return "0:00";
+  if(!t)return"0:00";
   const m=Math.floor(t/60);
   const s=Math.floor(t%60).toString().padStart(2,"0");
   return `${m}:${s}`;
 }
 
-load("morning");
+/* ===== RESTORE LAST PLAYLIST ===== */
+load(localStorage.getItem("lastPlaylist") || "morning");
 </script>
 
 </body>
