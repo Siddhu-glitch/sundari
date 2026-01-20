@@ -6,201 +6,92 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-*{box-sizing:border-box;max-width:100%}
+*{box-sizing:border-box}
 
 html,body{
   margin:0;
   height:100%;
-  overflow:hidden;
   font-family:"Century Gothic","Segoe UI",Arial,sans-serif;
   background:linear-gradient(135deg,#fde2e4,#fff1f2,#fef3c7);
   color:#374151;
 }
 
-/* ===== LAYOUT ===== */
-.container{
-  display:flex;
-  height:100vh;
-}
-
-/* ===== SIDEBAR ===== */
-.sidebar{
-  width:260px;
-  padding:24px;
-  background:rgba(255,255,255,.45);
-  position:fixed;
-  left:-260px;
-  top:0;
-  height:100vh;
-  z-index:1000;
-  transition:left .45s cubic-bezier(.25,1.5,.5,1);
-}
-.sidebar.open{left:0}
-
-.playlist-btn{
-  cursor:pointer;
-  margin-bottom:14px;
-  opacity:.85;
-}
-.playlist-btn:hover{opacity:1;font-weight:600}
-
-.playlist-btn.active{
-  background:linear-gradient(90deg,rgba(236,72,153,.35),transparent);
-  border-radius:10px;
-  padding:8px 10px;
-  font-weight:600;
-}
-
-/* ===== TOGGLE ===== */
-.sidebar-toggle{
-  position:fixed;
-  top:50%;
-  left:0;
-  transform:translateY(-50%);
-  background:rgba(255,255,255,.9);
-  padding:10px 6px;
-  border-radius:0 10px 10px 0;
-  font-weight:600;
-  cursor:pointer;
-  z-index:1001;
-}
-
-/* ===== OVERLAY ===== */
-.overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.25);
-  backdrop-filter:blur(6px);
-  opacity:0;
-  pointer-events:none;
-  transition:.3s;
-  z-index:999;
-}
-.overlay.show{
-  opacity:1;
-  pointer-events:auto;
-}
-
 /* ===== MAIN ===== */
 .main{
-  flex:1;
-  padding:30px;
-  width:100%;
+  padding:24px;
+  padding-bottom:160px;
 }
 
-/* ===== HEADER ===== */
-.header{
-  display:flex;
-  gap:20px;
-  align-items:center;
-}
-.header img{
-  width:150px;
-  height:150px;
-  border-radius:14px;
-  object-fit:cover;
-}
-.header h1{
-  margin:0;
-  font-size:2.6rem;
-  word-break:break-word;
-}
-.poetry{opacity:.6;font-style:italic}
-
-/* ===== SONG LIST ===== */
-.song-header,.song{
-  display:grid;
-  grid-template-columns:40px 60px 2fr 1.5fr 60px;
-  padding:10px;
-  align-items:center;
-}
-.song-header{
-  margin-top:20px;
-  opacity:.5;
-  border-bottom:1px solid rgba(0,0,0,.1);
-}
-.song{
-  border-radius:10px;
-  cursor:pointer;
-}
-.song:hover{background:rgba(255,255,255,.35)}
-.song img{
-  width:42px;
-  height:42px;
-  border-radius:6px;
-}
-.song.playing{
-  background:linear-gradient(90deg,rgba(236,72,153,.25),transparent);
-  font-weight:600;
-}
-
-/* ===== SCROLL ===== */
-#songs{
-  height:calc(100vh - 360px);
-  overflow-y:auto;
-  padding-bottom:140px;
-}
-#songs::-webkit-scrollbar{width:0}
-#songs{scrollbar-width:none}
-
-/* ===== PLAYER ===== */
+/* ===== PLAYER (SPOTIFY STYLE) ===== */
 .player{
   position:fixed;
-  bottom:20px;
+  bottom:18px;
   left:50%;
   transform:translateX(-50%);
-  width:calc(100% - 30px);
-  max-width:1100px;
-  background:rgba(255,255,255,.9);
+  width:calc(100% - 24px);
+  max-width:680px;
+  background:rgba(255,255,255,.95);
   backdrop-filter:blur(14px);
-  border-radius:18px;
-  padding:10px 16px;
-  display:grid;
-  grid-template-columns:1fr auto 1fr;
-  align-items:center;
-  box-shadow:0 8px 30px rgba(0,0,0,.15);
-  transition:.35s;
+  border-radius:22px;
+  padding:16px;
+  box-shadow:0 10px 40px rgba(0,0,0,.15);
 }
 
-.player.expanded{
-  bottom:0;
-  height:70vh;
-  border-radius:18px 18px 0 0;
-}
-
-.player-left{
+/* TOP INFO */
+.player-top{
   display:flex;
-  gap:12px;
   align-items:center;
-}
-.player-left img{
-  width:48px;
-  height:48px;
-  border-radius:8px;
+  gap:14px;
 }
 
-.controls{
-  display:flex;
-  gap:18px;
+.player-top img{
+  width:52px;
+  height:52px;
+  border-radius:10px;
+  object-fit:cover;
 }
-.controls button{
-  background:none;
-  border:none;
-  font-size:20px;
+
+.song-info{
+  flex:1;
+  min-width:0;
+}
+
+.song-info h4{
+  margin:0;
+  font-size:1.05rem;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.song-info p{
+  margin:2px 0 0;
+  font-size:.85rem;
+  opacity:.6;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* LIKE */
+.like-btn{
+  font-size:22px;
   cursor:pointer;
+  opacity:.5;
+  transition:.2s;
+}
+.like-btn.loved{
+  color:#ec4899;
+  opacity:1;
+  transform:scale(1.1);
 }
 
-/* ===== PROGRESS ===== */
+/* PROGRESS */
 .progress-wrap{
-  grid-column:1/-1;
-  display:flex;
-  gap:10px;
-  align-items:center;
-  font-size:.75rem;
-  opacity:.7;
+  margin:14px 0 8px;
 }
 .progress{
-  flex:1;
+  width:100%;
   height:4px;
   background:rgba(0,0,0,.15);
   border-radius:10px;
@@ -212,171 +103,157 @@ html,body{
   background:#ec4899;
   border-radius:10px;
 }
+.time{
+  display:flex;
+  justify-content:space-between;
+  font-size:.75rem;
+  opacity:.6;
+  margin-top:4px;
+}
+
+/* CONTROLS */
+.controls{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:34px;
+  margin-top:6px;
+}
+
+.controls button{
+  background:none;
+  border:none;
+  cursor:pointer;
+}
+
+.controls .play{
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  background:#ec4899;
+  color:#fff;
+  font-size:26px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 8px 20px rgba(236,72,153,.45);
+}
+
+.controls .small{
+  font-size:22px;
+  opacity:.85;
+}
+
+/* MOBILE */
+@media(max-width:480px){
+  .controls{gap:26px}
+  .controls .play{
+    width:58px;
+    height:58px;
+  }
+}
 </style>
 </head>
 
 <body>
 
-<div class="sidebar-toggle" onclick="toggleSidebar()">》》》</div>
-<div class="overlay" onclick="closeSidebar()"></div>
-
-<div class="container">
-
-  <div class="sidebar">
-    <h3>playlists</h3>
-    <div class="playlist-btn" data-key="morning" onclick="load('morning');closeSidebar()">🌅 morning feels</div>
-    <div class="playlist-btn" data-key="goto" onclick="load('goto');closeSidebar()">🎧 my go to songs</div>
-    <div class="playlist-btn" data-key="cry" onclick="load('cry');closeSidebar()">🖤 Cry with me</div>
-    <div class="playlist-btn" data-key="emo" onclick="load('emo');closeSidebar()">🌧️ endhukoo emo</div>
-  </div>
-
-  <div class="main">
-
-    <div class="header">
-      <img id="cover" src="mrng.jpeg">
-      <div>
-        <p style="opacity:.6">Public Playlist</p>
-        <h1 id="title">morning feels 🥰</h1>
-        <div class="poetry" id="poetry">I wake up softer than yesterday</div>
-      </div>
-    </div>
-
-    <div class="song-header">
-      <span>#</span><span></span><span>Title</span><span>Album</span><span>⏱</span>
-    </div>
-
-    <div id="songs"></div>
-
-  </div>
+<div class="main">
+  <h2>morning feels 🥰</h2>
+  <p style="opacity:.6">I wake up softer than yesterday</p>
 </div>
 
-<div class="player" id="player">
-  <div class="player-left">
-    <img id="pimg">
-    <div>
-      <div id="ptitle">—</div>
-      <div id="partist" style="opacity:.6;font-size:.85rem">—</div>
+<!-- PLAYER -->
+<div class="player">
+
+  <div class="player-top">
+    <img id="pimg" src="1.jpeg">
+    <div class="song-info">
+      <h4 id="ptitle">Mera Mann Kehne Laga</h4>
+      <p id="partist">Falak Shabbir</p>
+    </div>
+    <div id="likeBtn" class="like-btn">♥</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress" onclick="seek(event)">
+      <div class="progress-bar" id="bar"></div>
+    </div>
+    <div class="time">
+      <span id="cur">0:00</span>
+      <span id="dur">0:00</span>
     </div>
   </div>
 
   <div class="controls">
-    <button onclick="prev()">⏮</button>
-    <button onclick="toggle()">⏯</button>
-    <button onclick="next()">⏭</button>
-  </div>
-
-  <div></div>
-
-  <div class="progress-wrap">
-    <span id="cur">0:00</span>
-    <div class="progress" onclick="seek(event)">
-      <div class="progress-bar" id="bar"></div>
-    </div>
-    <span id="dur">0:00</span>
+    <button class="small" onclick="prev()">⏮</button>
+    <button class="play" id="playBtn" onclick="toggle()">▶</button>
+    <button class="small" onclick="next()">⏭</button>
   </div>
 
   <audio id="audio"></audio>
 </div>
 
 <script>
-/* ===== HAPTIC ===== */
-function vibrate(){navigator.vibrate && navigator.vibrate(15)}
-
-/* ===== SIDEBAR ===== */
-function toggleSidebar(){
-  document.querySelector(".sidebar").classList.toggle("open");
-  document.querySelector(".overlay").classList.toggle("show");
-  vibrate();
-}
-function closeSidebar(){
-  document.querySelector(".sidebar").classList.remove("open");
-  document.querySelector(".overlay").classList.remove("show");
-}
-
-/* ===== SWIPE ===== */
-let sx=0;
-document.addEventListener("touchstart",e=>sx=e.touches[0].clientX);
-document.addEventListener("touchend",e=>{
-  const dx=e.changedTouches[0].clientX-sx;
-  if(dx>80) toggleSidebar();
-  if(dx<-80) closeSidebar();
-});
-
-/* ===== PLAYER SWIPE ===== */
-let py=0;
-player.addEventListener("touchstart",e=>py=e.touches[0].clientY);
-player.addEventListener("touchend",e=>{
-  const dy=e.changedTouches[0].clientY-py;
-  if(dy<-80) player.classList.add("expanded");
-  if(dy>80) player.classList.remove("expanded");
-});
-
-/* ===== PLAYLIST DATA ===== */
-const playlists={
-  morning:{
-    title:"morning feels 🥰",
-    poetry:"I wake up softer than yesterday",
-    cover:"mrng.jpeg",
-    songs:[
-      {title:"Mera Mann Kehne Laga",artist:"Falak Shabbir",album:"Nautanki Saala",time:"3:47",img:"1.jpeg",src:"songs/Mera Mann Kehne Laga Nautanki Saala! 320 Kbps.mp3"},
-      {title:"Tum Se Hi",artist:"Mohit Chauhan",album:"Jab We Met",time:"5:21",img:"2.jpeg",src:"songs/Tum Se Hi Jab We Met 320 Kbps.mp3"}
-    ]
+const playlist=[
+  {
+    title:"Mera Mann Kehne Laga",
+    artist:"Falak Shabbir",
+    img:"1.jpeg",
+    src:"songs/Mera Mann Kehne Laga Nautanki Saala! 320 Kbps.mp3"
   },
-  goto:{title:"my go to songs",poetry:"these sound like me",cover:"mrng.jpeg",songs:[]},
-  cry:{title:"Cry with me",poetry:"I let myself feel it",cover:"mrng.jpeg",songs:[]},
-  emo:{title:"endhukoo emo",poetry:"some things don’t need answers",cover:"mrng.jpeg",songs:[]}
-};
+  {
+    title:"Tum Se Hi",
+    artist:"Mohit Chauhan",
+    img:"2.jpeg",
+    src:"songs/Tum Se Hi Jab We Met 320 Kbps.mp3"
+  }
+];
 
-let list=[],index=0;
+let index=0;
 const audio=document.getElementById("audio");
+const loved=JSON.parse(localStorage.getItem("lovedSongs")||"[]");
 
-/* ===== LOAD PLAYLIST ===== */
-function load(key){
-  localStorage.setItem("lastPlaylist",key);
-
-  document.querySelectorAll(".playlist-btn").forEach(b=>{
-    b.classList.toggle("active",b.dataset.key===key);
-  });
-
-  const p=playlists[key];
-  title.textContent=p.title;
-  poetry.textContent=p.poetry;
-  cover.src=p.cover;
-  list=p.songs;
-  songs.innerHTML="";
-  p.songs.forEach((s,i)=>{
-    const d=document.createElement("div");
-    d.className="song";
-    d.innerHTML=`<span>${i+1}</span><img src="${s.img}"><span>${s.title}</span><span>${s.album}</span><span>${s.time}</span>`;
-    d.onclick=()=>play(i);
-    songs.appendChild(d);
-  });
-  if(list.length) play(0);
-}
-
-/* ===== PLAYER ===== */
-function play(i){
+function load(i){
   index=i;
-  const s=list[i];
+  const s=playlist[i];
   audio.src=s.src;
-  audio.play();
   pimg.src=s.img;
   ptitle.textContent=s.title;
   partist.textContent=s.artist;
-  document.querySelectorAll(".song").forEach((e,j)=>e.classList.toggle("playing",j===i));
+  dur.textContent="0:00";
+  likeBtn.classList.toggle("loved",loved.includes(s.src));
 }
-function toggle(){audio.paused?audio.play():audio.pause()}
-function prev(){play((index-1+list.length)%list.length)}
-function next(){play((index+1)%list.length)}
-audio.onended=next;
 
-/* ===== PROGRESS ===== */
+function toggle(){
+  if(audio.paused){
+    audio.play();
+    playBtn.textContent="❚❚";
+  }else{
+    audio.pause();
+    playBtn.textContent="▶";
+  }
+}
+
+function prev(){
+  load((index-1+playlist.length)%playlist.length);
+  audio.play();
+}
+function next(){
+  load((index+1)%playlist.length);
+  audio.play();
+}
+
+audio.onloadedmetadata=()=>dur.textContent=format(audio.duration);
 audio.ontimeupdate=()=>{
   bar.style.width=(audio.currentTime/audio.duration)*100+"%";
   cur.textContent=format(audio.currentTime);
-  dur.textContent=format(audio.duration);
 };
-function seek(e){audio.currentTime=(e.offsetX/e.target.offsetWidth)*audio.duration}
+audio.onended=next;
+
+function seek(e){
+  audio.currentTime=(e.offsetX/e.target.offsetWidth)*audio.duration;
+}
+
 function format(t){
   if(!t)return"0:00";
   const m=Math.floor(t/60);
@@ -384,8 +261,19 @@ function format(t){
   return `${m}:${s}`;
 }
 
-/* ===== RESTORE LAST PLAYLIST ===== */
-load(localStorage.getItem("lastPlaylist") || "morning");
+/* LOVE */
+likeBtn.onclick=()=>{
+  const src=playlist[index].src;
+  if(loved.includes(src)){
+    loved.splice(loved.indexOf(src),1);
+  }else{
+    loved.push(src);
+  }
+  localStorage.setItem("lovedSongs",JSON.stringify(loved));
+  likeBtn.classList.toggle("loved");
+};
+
+load(0);
 </script>
 
 </body>
