@@ -40,9 +40,7 @@ body{
   justify-content:center;
   background:#000;
 }
-.lock-box{
-  text-align:center;
-}
+.lock-box{text-align:center;}
 .lock-box input{
   padding:12px 16px;
   border-radius:14px;
@@ -63,8 +61,8 @@ body{
   width:100vw;
   height:100vh;
   display:flex;
-  align-items:center;
   justify-content:center;
+  align-items:center;
 }
 .frame{
   width:100%;
@@ -77,21 +75,12 @@ body{
 }
 
 /* LEFT */
-.left{
-  display:flex;
-  align-items:center;
-}
+.left{display:flex;align-items:center;}
 .left p{line-height:2;}
 
 /* CENTER */
-.center{
-  text-align:center;
-  padding-top:20px;
-}
-.center h1{
-  font-size:2rem;
-  line-height:1.6;
-}
+.center{text-align:center;padding-top:20px;}
+.center h1{font-size:2rem;line-height:1.6;}
 
 /* RIGHT */
 .right{
@@ -105,11 +94,8 @@ body{
 .time .num{font-size:1.4rem;}
 .time .label{font-size:0.7rem;opacity:0.8;}
 
-/* NAME */
 .name{
-  margin-top: 100px;
-  top:20px;
-  right:24px;
+  margin-top:100px;
   font-size:1.1rem;
   opacity:0.85;
 }
@@ -136,85 +122,74 @@ body{
   position:absolute;
   bottom:18px;
   right:20px;
-  font-size:0.8rem;
+  font-size:0.9rem;
   cursor:pointer;
   opacity:0.7;
 }
 
 .hidden{display:none;}
 
+/* MOBILE FIX (IMPORTANT) */
+@media (max-width:768px){
 
-/* MOBILE OPTIMIZATION */
-@media (max-width: 768px) {
-  body {
-    overflow: hidden;
+  body{overflow:hidden;}
+
+  .wrapper{
+    align-items:flex-start;
+    overflow-y:auto;
   }
 
-  .frame {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
-    padding: 24px;
-    aspect-ratio: auto;
+  .frame{
+    grid-template-columns:1fr;
+    grid-template-rows:auto auto auto;
+    aspect-ratio:auto;
+    padding:24px;
+    padding-bottom:140px;
   }
 
-  .left {
-    justify-content: center;
-    text-align: left;
-    margin-bottom: 20px;
+  .left{text-align:left;justify-content:center;}
+  .left p{font-size:0.95rem;line-height:1.8;}
+
+  .center h1{
+    font-size:1.4rem;
+    margin-bottom:18px;
   }
 
-  .left p {
-    font-size: 0.95rem;
-    line-height: 1.8;
+  .right{
+    flex-direction:row;
+    flex-wrap:wrap;
+    justify-content:center;
+    align-items:center;
+    gap:12px 18px;
   }
 
-  .center h1 {
-    font-size: 1.4rem;
-    line-height: 1.6;
-    margin-bottom: 18px;
+  .time{text-align:center;}
+  .time .num{font-size:1.1rem;}
+  .time .label{font-size:0.65rem;}
+
+  .name{
+    width:100%;
+    text-align:center;
+    margin-top:16px;
   }
 
-  .right {
-    align-items: center;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px 18px;
+  /* KEY FIX */
+  .moon{
+    position:relative;
+    bottom:auto;
+    left:auto;
+    transform:none;
+    margin:28px auto 10px;
+    max-width:90%;
+    font-size:0.85rem;
   }
 
-  .time {
-    text-align: center;
-  }
-
-  .time .num {
-    font-size: 1.1rem;
-  }
-
-  .time .label {
-    font-size: 0.65rem;
-  }
-
-  .name {
-    margin-top: 18px;
-    font-size: 1rem;
-    text-align: center;
-    width: 100%;
-  }
-
-  .moon {
-    bottom: 70px;
-    font-size: 0.85rem;
-    padding: 14px 18px;
-    max-width: 90%;
-  }
-
-  .next {
-    bottom: 24px;
-    right: 16px;
-    font-size: 0.9rem;
+  .next{
+    position:fixed;
+    bottom:20px;
+    right:16px;
   }
 }
-
 </style>
 </head>
 
@@ -248,8 +223,8 @@ body{
 
     <div class="center">
       <h1>
-        This world has been quietly celebrating
-        since it got you <3
+        This world has been quietly celebrating<br>
+        since it got you &lt;3
       </h1>
     </div>
 
@@ -266,7 +241,6 @@ body{
   </div>
 </div>
 
-
 <div class="moon" id="moonBox"></div>
 <div class="next" onclick="nextImage()">>></div>
 
@@ -277,12 +251,13 @@ const birth = new Date("2003-01-06T00:00:00");
 
 /* BACKGROUND */
 const images=[
- "1.jpg","2.jpg","3.jpg","4.jpg",
- "5.jpg","6.jpg","7.jpg","8.jpg","9.jpg","10.jpg","11.jpg","12.jpg","13.jpg","14.jpg","15.jpg",,"16.jpg","17.jpg",
+ "1.jpg","2.jpg","3.jpg","4.jpg","5.jpg","6.jpg","7.jpg","8.jpg",
+ "9.jpg","10.jpg","11.jpg","12.jpg","13.jpg","14.jpg","15.jpg",
+ "16.jpg","17.jpg"
 ];
-images.forEach(s=>{let i=new Image();i.src=s;});
-let bgIndex=Math.floor(Math.random()*images.length);
+let bgIndex=0;
 const bg=document.getElementById("bg");
+
 function showBg(){
   bg.style.opacity=0;
   setTimeout(()=>{
@@ -291,55 +266,21 @@ function showBg(){
     bgIndex=(bgIndex+1)%images.length;
   },500);
 }
-function nextImage(){showBg();}
 
-/* NAME AUTO CHANGE — FIXED */
-const names = [
-  "Princess 👑💖",
-  "Queen 👸✨",
-  "Beautiful 🌹❤️",
-  "Sweetheart 🍯💛",
-  "<3 🤍",
-  "Sunshine ☀️🤍",
-  "Moon 🌙✨",
-  "Cutiepie 🥧💖🥰",
-  "Cutie 🥺💗",
-  "Yaar 🫶",
-  "Avocado 🥑💚",
-  "Gorgeous 😍🔥",
-
-  // Gen-Z / cute-human vibes
-  "Cutest Human 🥹💖",
-  "Softest Soul 🤍✨",
-  "Tiny Joy 🥺🌸",
-  "Purest Smile 😄🤍",
-  "Pretty Human 🌷💫",
-  "Lil Angel 👼💞",
-  "Warm Hug 🫂💗",
-  "Smol Bean 🫘🥹",
-  "Happy Place 🌈🤍",
-  "Gentle Heart 💓🌿",
-
-  // Gen-Z slang
-  "Baddie 😎🔥",
-  "Shawty 💋✨",
-  "BBG 💖😮‍💨",
-  "Giggles 😄💞"
+/* NAME AUTO CHANGE */
+const names=[
+ "Princess 👑💖","Queen 👸✨","Sunshine ☀️🤍","Moon 🌙✨",
+ "Cutie 🥺💗","Happy Place 🌈🤍","Softest Soul 🤍✨","Baddie 😎🔥"
 ];
+let ni=0;
+const nameBox=document.getElementById("nameBox");
+nameBox.innerText=names[0];
+setInterval(()=>{
+  ni=(ni+1)%names.length;
+  nameBox.innerText=names[ni];
+},2500);
 
-let ni = 0;
-const nameBox = document.getElementById("nameBox");
-
-nameBox.innerText = names[0];
-
-setInterval(() => {
-  ni = (ni + 1) % names.length;
-  nameBox.innerText = names[ni];
-}, 2500);
-
-
-/* TIME (OLD FORMAT) */
-let currentMoons=0;
+/* TIME */
 setInterval(()=>{
   const diff=new Date()-birth;
   const sec=Math.floor(diff/1000);
@@ -351,26 +292,22 @@ setInterval(()=>{
   weeks.innerText=Math.floor(day/7);
   months.innerText=Math.floor(day/30.44);
   years.innerText=Math.floor(day/365.25);
-  currentMoons=Math.floor(day/29.53);
 },1000);
 
-/* MOON POEMS */
+/* MOON TEXT */
 const moonLines=[
-()=>`Since you were born, the world has counted full moons — but the people around you have seen many more, every time you smiled.`,
-()=>`The sun sets once a day, yet on the evenings you laughed, it felt like it stayed a little longer.`,
-()=>`Astronomers count stars in the sky, I think they missed the ones that light up rooms when you enter.`,
-()=>`People say sunsets are rare, but sitting on a terrace with you made ordinary evenings unforgettable.`,
-()=>`The moon rises on schedule, your smile arrives unexpectedly and still becomes the brightest thing.`,
-()=>`Sunsets happen everywhere, but chai tastes different when you’re part of the moment.`,
-()=>`The moon reflects borrowed light, your warmth was always your own.`,
-()=>`The world counted moons and sunsets, unaware that something softer was quietly becoming unforgettable.`
+ "Since you were born, the world counted moons and sunsets — unaware that something softer was quietly becoming unforgettable.",
+ "People saw sunsets. The people around you saw full moons whenever you smiled.",
+ "The moon rises on schedule. Your warmth always arrived unexpectedly.",
+ "Sunsets happen daily. Moments with you never felt ordinary."
 ];
-
 let mi=0;
+const moonBox=document.getElementById("moonBox");
+
 function updateMoon(){
   moonBox.style.opacity=0;
   setTimeout(()=>{
-    moonBox.innerHTML=moonLines[mi]();
+    moonBox.innerText=moonLines[mi];
     moonBox.style.opacity=1;
     mi=(mi+1)%moonLines.length;
   },600);
@@ -387,22 +324,7 @@ function unlock(){
     setInterval(showBg,28000);
   }
 }
-
-function scaleToScreen() {
-  const frame = document.querySelector(".frame");
-  const scale = Math.min(
-    window.innerWidth / frame.offsetWidth,
-    window.innerHeight / frame.offsetHeight
-  );
-  frame.style.transform = `scale(${scale})`;
-  frame.style.transformOrigin = "top center";
-}
-
-window.addEventListener("resize", scaleToScreen);
-scaleToScreen();
-
 </script>
 
 </body>
 </html>
-
