@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>since it got you</title>
+
+<style>
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:system-ui, sans-serif;
+  color:#fff;
+  background:#000;
+  overflow:hidden;
+}
+
+/* BACKGROUND */
+.bg{
+  position:fixed;
+  inset:0;
+  background-size:cover;
+  background-position:center;
+  transition:opacity 1.8s ease;
+  z-index:-1;
+}
+.bg::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.35);
+}
+
+/* LOCK */
+.lock{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#000;
+}
+.lock-box{
+  text-align:center;
+}
+.lock-box input{
+  padding:12px 16px;
+  border-radius:14px;
+  border:none;
+  font-size:1rem;
+}
+.lock-box button{
+  margin-top:14px;
+  padding:10px 24px;
+  border:none;
+  border-radius:16px;
+  background:#fff;
+  cursor:pointer;
+}
+
+/* LAYOUT */
+.wrapper{
+  width:100vw;
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.frame{
+  width:100%;
+  height:100%;
+  max-width:160vh;
+  aspect-ratio:16/9;
+  display:grid;
+  grid-template-columns:1.2fr 1.6fr 1fr;
+  padding:50px;
+}
+
+/* LEFT */
+.left{
+  display:flex;
+  align-items:center;
+}
+.left p{line-height:2;}
+
+/* CENTER */
+.center{
+  text-align:center;
+  padding-top:20px;
+}
+.center h1{
+  font-size:2rem;
+  line-height:1.6;
+}
+
+/* RIGHT */
+.right{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  justify-content:center;
+  gap:14px;
+}
+.time{text-align:right;}
+.time .num{font-size:1.4rem;}
+.time .label{font-size:0.7rem;opacity:0.8;}
+
+/* NAME */
+.name{
+  margin-top: 100px;
+  top:20px;
+  right:24px;
+  font-size:1.1rem;
+  opacity:0.85;
+}
+
+/* MOON BOX */
+.moon{
+  position:absolute;
+  bottom:40px;
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+  font-size:0.95rem;
+  line-height:1.7;
+  border:1px solid rgba(255,255,255,0.4);
+  padding:16px 26px;
+  border-radius:18px;
+  background:rgba(0,0,0,0.25);
+  max-width:520px;
+  transition:opacity 0.6s ease;
+}
+
+/* NEXT */
+.next{
+  position:absolute;
+  bottom:18px;
+  right:20px;
+  font-size:0.8rem;
+  cursor:pointer;
+  opacity:0.7;
+}
+
+.hidden{display:none;}
+
+
+/* MOBILE OPTIMIZATION */
+@media (max-width: 768px) {
+  body {
+    overflow: hidden;
+  }
+
+  .frame {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    padding: 24px;
+    aspect-ratio: auto;
+  }
+
+  .left {
+    justify-content: center;
+    text-align: left;
+    margin-bottom: 20px;
+  }
+
+  .left p {
+    font-size: 0.95rem;
+    line-height: 1.8;
+  }
+
+  .center h1 {
+    font-size: 1.4rem;
+    line-height: 1.6;
+    margin-bottom: 18px;
+  }
+
+  .right {
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 18px;
+  }
+
+  .time {
+    text-align: center;
+  }
+
+  .time .num {
+    font-size: 1.1rem;
+  }
+
+  .time .label {
+    font-size: 0.65rem;
+  }
+
+  .name {
+    margin-top: 18px;
+    font-size: 1rem;
+    text-align: center;
+    width: 100%;
+  }
+
+  .moon {
+    bottom: 70px;
+    font-size: 0.85rem;
+    padding: 14px 18px;
+    max-width: 90%;
+  }
+
+  .next {
+    bottom: 24px;
+    right: 16px;
+    font-size: 0.9rem;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bg" id="bg"></div>
+
+<!-- LOCK -->
+<div class="lock" id="lock">
+  <div class="lock-box">
+    <input type="password" id="pw" placeholder="password">
+    <br>
+    <button onclick="unlock()">open</button>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="wrapper hidden" id="content">
+  <div class="frame">
+
+    <div class="left">
+      <p>
+        some people walk in<br>
+        and the air feels lighter<br><br>
+        smiles stay a little longer<br>
+        days move a little softer<br><br>
+        you do that<br>
+        just by being you
+      </p>
+    </div>
+
+    <div class="center">
+      <h1>
+        This world has been quietly celebrating
+        since it got you <3
+      </h1>
+    </div>
+
+    <div class="right">
+      <div class="time"><div class="num" id="years"></div><div class="label">years</div></div>
+      <div class="time"><div class="num" id="months"></div><div class="label">months</div></div>
+      <div class="time"><div class="num" id="weeks"></div><div class="label">weeks</div></div>
+      <div class="time"><div class="num" id="days"></div><div class="label">days</div></div>
+      <div class="time"><div class="num" id="hours"></div><div class="label">hours</div></div>
+      <div class="time"><div class="num" id="seconds"></div><div class="label">seconds</div></div>
+      <div class="name" id="nameBox"></div>
+    </div>
+
+  </div>
+</div>
+
+
+<div class="moon" id="moonBox"></div>
+<div class="next" onclick="nextImage()">>></div>
+
+<script>
+/* CONFIG */
+const PASSWORD = btoa("123");
+const birth = new Date("2003-01-06T00:00:00");
+
+/* BACKGROUND */
+const images=[
+ "1.jpg","2.jpg","3.jpg","4.jpg",
+ "5.jpg","6.jpg","7.jpg","8.jpg","9.jpg","10.jpg"
+];
+images.forEach(s=>{let i=new Image();i.src=s;});
+let bgIndex=Math.floor(Math.random()*images.length);
+const bg=document.getElementById("bg");
+function showBg(){
+  bg.style.opacity=0;
+  setTimeout(()=>{
+    bg.style.backgroundImage=`url('${images[bgIndex]}')`;
+    bg.style.opacity=1;
+    bgIndex=(bgIndex+1)%images.length;
+  },500);
+}
+function nextImage(){showBg();}
+
+/* NAME AUTO CHANGE — FIXED */
+const names = [
+  "Princess 👑💖",
+  "Queen 👸✨",
+  "Beautiful 🌹❤️",
+  "Sweetheart 🍯💛",
+  "<3 🤍",
+  "Sunshine ☀️🤍",
+  "Moon 🌙✨",
+  "Cutiepie 🥧💖🥰",
+  "Cutie 🥺💗",
+  "Yaar 🫶",
+  "Avocado 🥑💚",
+  "Gorgeous 😍🔥",
+
+  // Gen-Z / cute-human vibes
+  "Cutest Human 🥹💖",
+  "Softest Soul 🤍✨",
+  "Tiny Joy 🥺🌸",
+  "Purest Smile 😄🤍",
+  "Pretty Human 🌷💫",
+  "Lil Angel 👼💞",
+  "Warm Hug 🫂💗",
+  "Smol Bean 🫘🥹",
+  "Happy Place 🌈🤍",
+  "Gentle Heart 💓🌿",
+
+  // Gen-Z slang
+  "Baddie 😎🔥",
+  "Shawty 💋✨",
+  "BBG 💖😮‍💨",
+  "Giggles 😄💞"
+];
+
+let ni = 0;
+const nameBox = document.getElementById("nameBox");
+
+nameBox.innerText = names[0];
+
+setInterval(() => {
+  ni = (ni + 1) % names.length;
+  nameBox.innerText = names[ni];
+}, 2500);
+
+
+/* TIME (OLD FORMAT) */
+let currentMoons=0;
+setInterval(()=>{
+  const diff=new Date()-birth;
+  const sec=Math.floor(diff/1000);
+  const hr=Math.floor(sec/3600);
+  const day=Math.floor(hr/24);
+  seconds.innerText=sec;
+  hours.innerText=hr;
+  days.innerText=day;
+  weeks.innerText=Math.floor(day/7);
+  months.innerText=Math.floor(day/30.44);
+  years.innerText=Math.floor(day/365.25);
+  currentMoons=Math.floor(day/29.53);
+},1000);
+
+/* MOON POEMS */
+const moonLines=[
+()=>`Since you were born, the world has counted full moons — but the people around you have seen many more, every time you smiled.`,
+()=>`The sun sets once a day, yet on the evenings you laughed, it felt like it stayed a little longer.`,
+()=>`Astronomers count stars in the sky, I think they missed the ones that light up rooms when you enter.`,
+()=>`People say sunsets are rare, but sitting on a terrace with you made ordinary evenings unforgettable.`,
+()=>`The moon rises on schedule, your smile arrives unexpectedly and still becomes the brightest thing.`,
+()=>`Sunsets happen everywhere, but chai tastes different when you’re part of the moment.`,
+()=>`The moon reflects borrowed light, your warmth was always your own.`,
+()=>`The world counted moons and sunsets, unaware that something softer was quietly becoming unforgettable.`
+];
+
+let mi=0;
+function updateMoon(){
+  moonBox.style.opacity=0;
+  setTimeout(()=>{
+    moonBox.innerHTML=moonLines[mi]();
+    moonBox.style.opacity=1;
+    mi=(mi+1)%moonLines.length;
+  },600);
+}
+updateMoon();
+setInterval(updateMoon,18000);
+
+/* LOCK */
+function unlock(){
+  if(btoa(pw.value)===PASSWORD){
+    lock.classList.add("hidden");
+    content.classList.remove("hidden");
+    showBg();
+    setInterval(showBg,28000);
+  }
+}
+
+function scaleToScreen() {
+  const frame = document.querySelector(".frame");
+  const scale = Math.min(
+    window.innerWidth / frame.offsetWidth,
+    window.innerHeight / frame.offsetHeight
+  );
+  frame.style.transform = `scale(${scale})`;
+  frame.style.transformOrigin = "top center";
+}
+
+window.addEventListener("resize", scaleToScreen);
+scaleToScreen();
+
+</script>
+
+</body>
+</html>
